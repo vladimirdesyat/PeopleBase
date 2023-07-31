@@ -87,41 +87,52 @@ namespace PeopleBase
                         var viewConnect = new SqlCommand(viewTable, connect);
                         reader = viewConnect.ExecuteReader();
                         reader.Read();
-                        
+
                         // listColumnsOfDatabase.Add(reader.GetString(0));
-
-                        for (int i = 0; i < reader.FieldCount; i++)
+                        while (reader.Read())
                         {
-                            listValuesOfTable.Add(reader.GetName(i));
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                listValuesOfTable.Add(reader.GetName(i));
 
-                            listValuesOfTable.Add(reader.GetValue(i).ToString());
+                                listValuesOfTable.Add(reader.GetValue(i).ToString());
 
-                            listColumnsOfTable.Add(reader.GetName(i));
+                                listColumnsOfTable.Add(reader.GetName(i));
 
-                            Console.WriteLine(reader.GetName(i));
+                                listValuesOfColumns.Add(reader.GetValue(i).ToString());
 
-                            listValuesOfColumns.Add(reader.GetValue(i).ToString());
+                                Console.WriteLine(reader.GetName(i));                               
 
-                            Console.WriteLine(reader.GetValue(i));
+                                Console.WriteLine(reader.GetValue(i));
+                            }
                         }
+                            // Console.WriteLine($"|{listValuesOfTable[0]}|{listValuesOfTable[1]}|{listValuesOfTable[2]}|");
+
+                            // Console.WriteLine(string.Format("|{0,5}|{1,5}|{2,5}|", column));
+
+                            if (connect.State == ConnectionState.Open)
+                            {
+                                connect.Close();
+                            }
                         
-                        // Console.WriteLine($"|{listValuesOfTable[0]}|{listValuesOfTable[1]}|{listValuesOfTable[2]}|");
-                            
-                        // Console.WriteLine(string.Format("|{0,5}|{1,5}|{2,5}|", column));
-                        
+                        break;
+                    case "4":
+                        connect.Open();
+                        break;
+                    case "5":
+                        connect.Open();
+                        break;
+                    case "6":
+                        connect.Open();
+                        break;
+                    case "clear":
+                        connect.Open();
+                        var clearConnect = new SqlCommand(clearTable, connect);
+                        _ = clearConnect.ExecuteReader();
                         if (connect.State == ConnectionState.Open)
                         {
                             connect.Close();
                         }
-                        break;
-                    case "4":
-
-                        break;
-                    case "5":
-
-                        break;
-                    case "6":
-
                         break;
                     default:
                         break;
