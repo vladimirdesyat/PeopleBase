@@ -12,26 +12,30 @@ namespace PeopleBase
         public DataTable tbl = new DataTable();
         public BulkDataTable()
         {
-            
-        }
-
-        public void Start()
-        {
+            tbl.TableName = "PEOPLE";
             tbl.Columns.Add(new DataColumn("FULL_NAME", typeof(string)));
             tbl.Columns.Add(new DataColumn("BIRTH_DATE", typeof(string)));
             tbl.Columns.Add(new DataColumn("GENDER", typeof(string)));
-
+        }
+        public DataTable Start()
+        {
             RandomGen randomGen = new RandomGen();
 
-            for (int i = 0; i < 10000; i++)
-            {
-                DataRow row = tbl.NewRow();
-                row["FULL_NAME"] = randomGen.Output()[0];
-                row["BIRTH_DATE"] = randomGen.Output()[1];
-                row["GENDER"] = randomGen.Output()[2];
+            DataRow row = tbl.NewRow();
+            
+            row["FULL_NAME"] = randomGen.Output()[0];
+            row["BIRTH_DATE"] = randomGen.Output()[1];
+            row["GENDER"] = randomGen.Output()[2];
 
-                tbl.Rows.Add(row);
-            }
+            tbl.Rows.Add(row);
+            
+            /*
+            var writer = new StringWriter();
+            tbl.WriteXml(writer);
+            Console.WriteLine(writer.ToString());
+            */
+
+            return tbl;
         }
     }
 }

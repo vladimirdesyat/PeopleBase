@@ -118,25 +118,29 @@ namespace PeopleBase
                     case "4":
                         watch.Start();
                         BulkDataTable bulkDataTable = new BulkDataTable();
-                        bulkDataTable.Start();
-                        var dt = bulkDataTable.tbl;
-
+                        DataTable dt = new DataTable();
+                        for (int i = 10; i > 0; i--)
+                        {                            
+                            dt = bulkDataTable.Start();
+                        }
                         SqlBulkCopy objbulk = new SqlBulkCopy(connect);
 
                         objbulk.DestinationTableName = "PEOPLE";
 
+                        
                         objbulk.ColumnMappings.Add("FULL_NAME", "FULL_NAME");
                         objbulk.ColumnMappings.Add("BIRTH_DATE", "BIRTH_DATE");
                         objbulk.ColumnMappings.Add("GENDER", "GENDER");
-                                                 
+                        
+
                         connect.Open();
 
                         objbulk.WriteToServer(dt);
+                        
+                        connect.Close();
                         watch.Stop();
                         Console.WriteLine();
                         Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
-                        connect.Close();
-
                         break;
                     case "5":
                         connect.Open();
@@ -213,6 +217,46 @@ namespace PeopleBase
                         {
                             connect.Close();
                         }
+                        break;
+                    case "view":
+                        connect.Open();
+                        viewConnect = new SqlCommand(viewAllTable, connect);
+
+                        reader = viewConnect.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                if (valuesOfColumns.Count < 3)
+                                {
+                                    valuesOfColumns.Add(reader.GetName(i).ToString());
+                                }
+                                valuesOfRows.Add(reader.GetValue(i).ToString());
+                            }
+                        }
+                        table.AddColumn(valuesOfColumns);
+                        for (int i = 0; i < valuesOfRows.Count; i++)
+                        {
+                            if ((i + 1) % 3 == 0)
+                            {
+                                output.Add(valuesOfRows[i]);
+                                table.AddRow(output[0], output[1], output[2]);
+                                output.Clear();
+                            }
+                            else
+                            {
+                                output.Add(valuesOfRows[i]);
+                            }
+                        }
+                        table.Write();
+                        Console.WriteLine();
+
+                        if (connect.State == ConnectionState.Open)
+                        {
+                            connect.Close();
+                        }
+
                         break;
                     default:
                         break;
