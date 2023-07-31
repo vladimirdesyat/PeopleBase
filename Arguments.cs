@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -18,6 +19,7 @@ namespace PeopleBase
         List<string> valuesOfRows = new List<string>();
         List<string> output = new List<string>();
         ConsoleTable table = new ConsoleTable();
+        Stopwatch watch = new Stopwatch();
         public Arguments(string?[] args)
         {
             this.args = args;
@@ -118,6 +120,7 @@ namespace PeopleBase
                         break;
                     case "5":
                         connect.Open();
+                        watch.Start();
                         var checkConnect = new SqlCommand(checkTime, connect);
 
                         reader = checkConnect.ExecuteReader();
@@ -148,7 +151,9 @@ namespace PeopleBase
                             }
                         }
                         table.Write();
+                        watch.Stop();
                         Console.WriteLine();
+                        Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
 
                         if (connect.State == ConnectionState.Open)
                         {
