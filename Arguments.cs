@@ -116,7 +116,15 @@ namespace PeopleBase
                         
                         break;
                     case "4":
+                        RandomGen randomGen = new RandomGen();
+                        query += $"VALUES ('{randomGen.Output()[0]}', '{randomGen.Output()[1]}', '{randomGen.Output()[2]}')";
+                        queryConnect = new SqlCommand(query, connect);
                         connect.Open();
+                        _ = queryConnect.ExecuteReader();
+                        if (connect.State == ConnectionState.Open)
+                        {
+                            connect.Close();
+                        }
                         break;
                     case "5":
                         connect.Open();
