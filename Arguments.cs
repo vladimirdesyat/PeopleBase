@@ -116,15 +116,27 @@ namespace PeopleBase
                         
                         break;
                     case "4":
-                        RandomGen randomGen = new RandomGen();
-                        query += $"VALUES ('{randomGen.Output()[0]}', '{randomGen.Output()[1]}', '{randomGen.Output()[2]}')";
-                        queryConnect = new SqlCommand(query, connect);
+                        watch.Start();
+                        BulkDataTable bulkDataTable = new BulkDataTable();
+                        bulkDataTable.Start();
+                        var dt = bulkDataTable.tbl;
+
+                        SqlBulkCopy objbulk = new SqlBulkCopy(connect);
+
+                        objbulk.DestinationTableName = "PEOPLE";
+
+                        objbulk.ColumnMappings.Add("FULL_NAME", "FULL_NAME");
+                        objbulk.ColumnMappings.Add("BIRTH_DATE", "BIRTH_DATE");
+                        objbulk.ColumnMappings.Add("GENDER", "GENDER");
+                                                 
                         connect.Open();
-                        _ = queryConnect.ExecuteReader();
-                        if (connect.State == ConnectionState.Open)
-                        {
-                            connect.Close();
-                        }
+
+                        objbulk.WriteToServer(dt);
+                        watch.Stop();
+                        Console.WriteLine();
+                        Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
+                        connect.Close();
+
                         break;
                     case "5":
                         connect.Open();
@@ -171,6 +183,27 @@ namespace PeopleBase
                         break;
                     case "6":
                         connect.Open();
+                        break;
+                    case "7":
+                        RandomGen randomGen = new RandomGen();
+                        int check = 0;
+                        watch.Start();                        
+                        while (check < 10)
+                        {
+                            query += $"VALUES ('{randomGen.Output()[0]}', '{randomGen.Output()[1]}', '{randomGen.Output()[2]}')";
+                            queryConnect = new SqlCommand(query, connect);
+                            connect.Open();
+                            _ = queryConnect.ExecuteReader();
+                            if (connect.State == ConnectionState.Open)
+                            {
+                                connect.Close();
+                            }
+                            query = "INSERT INTO PEOPLE(FULL_NAME, BIRTH_DATE, GENDER)";
+                            check++;
+                        }
+                        watch.Stop();
+                        Console.WriteLine();
+                        Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
                         break;
                     case "clear":
                         connect.Open();
