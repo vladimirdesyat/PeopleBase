@@ -17,6 +17,7 @@ namespace PeopleBase
         List<string> valuesOfColumns = new List<string>();
         List<string> valuesOfRows = new List<string>();
         List<string> output = new List<string>();
+        ConsoleTable table = new ConsoleTable();
         public Arguments(string?[] args)
         {
             this.args = args;
@@ -75,7 +76,7 @@ namespace PeopleBase
                     case "3":
                         connect.Open();
                         var viewConnect = new SqlCommand(viewTable, connect);
-                        var table = new ConsoleTable();
+                        
                         reader = viewConnect.ExecuteReader();
 
                         while (reader.Read())
@@ -117,6 +118,43 @@ namespace PeopleBase
                         break;
                     case "5":
                         connect.Open();
+                        var checkConnect = new SqlCommand(checkTime, connect);
+
+                        reader = checkConnect.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                if (valuesOfColumns.Count < 3)
+                                {
+                                    valuesOfColumns.Add(reader.GetName(i).ToString());
+                                }
+                                valuesOfRows.Add(reader.GetValue(i).ToString());
+                            }
+                        }
+                        table.AddColumn(valuesOfColumns);
+                        for (int i = 0; i < valuesOfRows.Count; i++)
+                        {
+                            if ((i + 1) % 3 == 0)
+                            {
+                                output.Add(valuesOfRows[i]);
+                                table.AddRow(output[0], output[1], output[2]);
+                                output.Clear();
+                            }
+                            else
+                            {
+                                output.Add(valuesOfRows[i]);
+                            }
+                        }
+                        table.Write();
+                        Console.WriteLine();
+
+                        if (connect.State == ConnectionState.Open)
+                        {
+                            connect.Close();
+                        }
+
                         break;
                     case "6":
                         connect.Open();
