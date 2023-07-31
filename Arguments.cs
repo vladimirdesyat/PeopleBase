@@ -86,7 +86,6 @@ namespace PeopleBase
                         connect.Open();
                         var viewConnect = new SqlCommand(viewTable, connect);
                         reader = viewConnect.ExecuteReader();
-                        reader.Read();
 
                         // listColumnsOfDatabase.Add(reader.GetString(0));
                         while (reader.Read())
