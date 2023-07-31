@@ -8,7 +8,7 @@ namespace PeopleBase
 {
     internal class Table : Database
     {
-        public string viewTable = "SELECT * FROM PEOPLE WHERE 1=1";
+        public string viewTable = "SELECT * FROM PEOPLE ORDER BY FULL_NAME";
         public string clearTable = "DELETE FROM PEOPLE";
         public string createTable = "CREATE TABLE PEOPLE(Full_Name char(50),Birth_Date char(8),F_M char(1))";
         public string query = "INSERT INTO PEOPLE(Full_Name, Birth_Date, F_M)";

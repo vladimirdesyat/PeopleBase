@@ -7,15 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
+using ConsoleTables;
 
 namespace PeopleBase
 {
     internal class Arguments : Connection
     {
         string?[] args;
-        List<string> listColumnsOfTable = new List<string>();
-        List<string> listValuesOfColumns = new List<string>();
-        List<string> listValuesOfTable = new List<string>();
+        List<string> valuesOfColumns = new List<string>();
+        List<string> valuesOfRows = new List<string>();
+        List<string> output = new List<string>();
         public Arguments(string?[] args)
         {
             this.args = args;
@@ -70,49 +71,45 @@ namespace PeopleBase
                         {
                             connect.Close();
                         }
-                        /*
-                        while (reader.Read())
-                        {
-                            for (int i = 0; i < reader.FieldCount; i++)
-                            {
-                                Console.WriteLine(reader.GetValue(i));
-                            }
-                            Console.WriteLine();
-                        }
-                        
-                        */
                         break;
                     case "3":
                         connect.Open();
                         var viewConnect = new SqlCommand(viewTable, connect);
+                        var table = new ConsoleTable();
                         reader = viewConnect.ExecuteReader();
 
-                        // listColumnsOfDatabase.Add(reader.GetString(0));
                         while (reader.Read())
-                        {
+                        {                            
                             for (int i = 0; i < reader.FieldCount; i++)
                             {
-                                listValuesOfTable.Add(reader.GetName(i));
-
-                                listValuesOfTable.Add(reader.GetValue(i).ToString());
-
-                                listColumnsOfTable.Add(reader.GetName(i));
-
-                                listValuesOfColumns.Add(reader.GetValue(i).ToString());
-
-                                Console.WriteLine(reader.GetName(i));                               
-
-                                Console.WriteLine(reader.GetValue(i));
+                                if (valuesOfColumns.Count < 3)
+                                {
+                                    valuesOfColumns.Add(reader.GetName(i).ToString());
+                                }
+                                valuesOfRows.Add(reader.GetValue(i).ToString());
                             }
                         }
-                            // Console.WriteLine($"|{listValuesOfTable[0]}|{listValuesOfTable[1]}|{listValuesOfTable[2]}|");
-
-                            // Console.WriteLine(string.Format("|{0,5}|{1,5}|{2,5}|", column));
-
-                            if (connect.State == ConnectionState.Open)
+                        table.AddColumn(valuesOfColumns);
+                        for(int i = 0; i < valuesOfRows.Count;i++)
+                        {
+                            if ((i+1) % 3 == 0)
                             {
-                                connect.Close();
+                                output.Add(valuesOfRows[i]);
+                                table.AddRow(output[0], output[1], output[2]);
+                                output.Clear();
                             }
+                            else
+                            {
+                                output.Add(valuesOfRows[i]);
+                            }
+                        }                        
+                        table.Write();
+                        Console.WriteLine();
+
+                        if (connect.State == ConnectionState.Open)
+                        {
+                            connect.Close();
+                        }
                         
                         break;
                     case "4":
