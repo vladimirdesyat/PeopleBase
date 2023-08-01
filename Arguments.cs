@@ -1,13 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.Common;
 using ConsoleTables;
 
 namespace PeopleBase
@@ -23,7 +16,7 @@ namespace PeopleBase
         public Arguments(string?[] args)
         {
             this.args = args;
-            if (File.Exists(saveDataBase()) == true)
+            if (File.Exists(saveDataBase()))
             {
                 var createConnect = new SqlCommand(createDataBase(), connect);
                 connect.Open();
@@ -89,7 +82,7 @@ namespace PeopleBase
                                 {
                                     valuesOfColumns.Add(reader.GetName(i).ToString());
                                 }
-                                valuesOfRows.Add(reader.GetValue(i).ToString());
+                                valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
                             }
                         }
                         table.AddColumn(valuesOfColumns);
@@ -209,7 +202,7 @@ namespace PeopleBase
                                 {
                                     valuesOfColumns.Add(reader.GetName(i).ToString());
                                 }
-                                valuesOfRows.Add(reader.GetValue(i).ToString());
+                                valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
                             }
                         }
                         table.AddColumn(valuesOfColumns);
@@ -263,7 +256,7 @@ namespace PeopleBase
                                 {
                                     valuesOfColumns.Add(reader.GetName(i).ToString());
                                 }
-                                valuesOfRows.Add(reader.GetValue(i).ToString());
+                                valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
                             }
                         }
                         table.AddColumn(valuesOfColumns);

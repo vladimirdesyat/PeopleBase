@@ -1,8 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
-using PeopleBase;
-
+﻿using PeopleBase;
 class Program
 {
     static void Main(string[] args)
@@ -22,7 +18,7 @@ class Program
         }
         else
         {
-            var arg = new Arguments(args);
+            _ = new Arguments(args);
         }
     }
 }
