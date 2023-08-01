@@ -27,7 +27,8 @@ namespace PeopleBase
             {
                 int range = (DateTime.Today - dateStart).Days;
                 var birthDate = dateStart.AddDays(rand.Next(range));
-                return birthDate.ToString().Substring(0, 10);
+                
+                return birthDate.ToString();
             }                      
         }
         public string FullName()

@@ -17,7 +17,7 @@ namespace PeopleBase
             tbl.Columns.Add(new DataColumn("BIRTH_DATE", typeof(string)));
             tbl.Columns.Add(new DataColumn("GENDER", typeof(string)));
         }
-        public DataTable Start()
+        public DataTable Million()
         {
             RandomGen randomGen = new RandomGen();
 
@@ -34,6 +34,28 @@ namespace PeopleBase
             tbl.WriteXml(writer);
             Console.WriteLine(writer.ToString());
             */
+
+            return tbl;
+        }
+
+        public DataTable Hundred()
+        {
+            RandomGen randomGen = new RandomGen();
+
+            DataRow row = tbl.NewRow();
+                        
+            if (randomGen.Output()[2].Contains('F')) { }
+            else
+            {
+                if (randomGen.Output()[0].Contains('F'))
+                {
+                    row["FULL_NAME"] = randomGen.Output()[0];
+                    row["BIRTH_DATE"] = randomGen.Output()[1];
+                    row["GENDER"] = randomGen.Output()[2];
+                }                
+            }
+
+            tbl.Rows.Add(row);
 
             return tbl;
         }

@@ -77,7 +77,7 @@ namespace PeopleBase
                         break;
                     case "3":
                         connect.Open();
-                        var viewConnect = new SqlCommand(viewTable, connect);
+                        var viewConnect = new SqlCommand(viewFullAgeTable, connect);
                         
                         reader = viewConnect.ExecuteReader();
 
@@ -93,19 +93,22 @@ namespace PeopleBase
                             }
                         }
                         table.AddColumn(valuesOfColumns);
+                        table.AddColumn("Age".Split('\n'));
+               
                         for(int i = 0; i < valuesOfRows.Count;i++)
                         {
-                            if ((i+1) % 3 == 0)
+                            if ((i+1) % 4 == 0)
                             {
                                 output.Add(valuesOfRows[i]);
-                                table.AddRow(output[0], output[1], output[2]);
+                                table.AddRow(output[0], output[1].Substring(0, 10), output[2], output[3]);
                                 output.Clear();
                             }
                             else
                             {
                                 output.Add(valuesOfRows[i]);
                             }
-                        }                        
+                        }
+                        
                         table.Write();
                         Console.WriteLine();
 
@@ -119,14 +122,19 @@ namespace PeopleBase
                         watch.Start();
                         BulkDataTable bulkDataTable = new BulkDataTable();
                         DataTable dt = new DataTable();
-                        for (int i = 10; i > 0; i--)
+                        for (int i = 1000000; i > 0; i--)
                         {                            
-                            dt = bulkDataTable.Start();
+                            dt = bulkDataTable.Million();
                         }
+
+                        dt = dt.Rows
+                                .Cast<DataRow>()
+                                .Where(row => !row.ItemArray.All(f => f is DBNull))
+                                .CopyToDataTable();
+
                         SqlBulkCopy objbulk = new SqlBulkCopy(connect);
 
                         objbulk.DestinationTableName = "PEOPLE";
-
                         
                         objbulk.ColumnMappings.Add("FULL_NAME", "FULL_NAME");
                         objbulk.ColumnMappings.Add("BIRTH_DATE", "BIRTH_DATE");
@@ -136,8 +144,52 @@ namespace PeopleBase
                         connect.Open();
 
                         objbulk.WriteToServer(dt);
-                        
-                        connect.Close();
+
+                        if (connect.State == ConnectionState.Open)
+                        {
+                            connect.Close();
+                        }
+
+                        watch.Stop();
+                        Console.WriteLine();
+                        Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
+                        break;
+                    case "4.1":
+                        watch.Start();
+                        bulkDataTable = new BulkDataTable();
+                        dt = new DataTable();
+                        for (int i = 2000; i > 0; i--)
+                        {
+                            dt = bulkDataTable.Hundred();
+                            if (dt.Select("GENDER = 'M'").Length == 100)
+                            {
+                                break;
+                            }
+                        }
+
+                        dt = dt.Rows
+                                .Cast<DataRow>()
+                                .Where(row => !row.ItemArray.All(f => f is DBNull))
+                                .CopyToDataTable();
+
+                        objbulk = new SqlBulkCopy(connect);
+
+                        objbulk.DestinationTableName = "PEOPLE";
+
+                        objbulk.ColumnMappings.Add("FULL_NAME", "FULL_NAME");
+                        objbulk.ColumnMappings.Add("BIRTH_DATE", "BIRTH_DATE");
+                        objbulk.ColumnMappings.Add("GENDER", "GENDER");
+
+
+                        connect.Open();
+
+                        objbulk.WriteToServer(dt);
+
+                        if (connect.State == ConnectionState.Open)
+                        {
+                            connect.Close();
+                        }
+
                         watch.Stop();
                         Console.WriteLine();
                         Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
@@ -188,27 +240,6 @@ namespace PeopleBase
                     case "6":
                         connect.Open();
                         break;
-                    case "7":
-                        RandomGen randomGen = new RandomGen();
-                        int check = 0;
-                        watch.Start();                        
-                        while (check < 10)
-                        {
-                            query += $"VALUES ('{randomGen.Output()[0]}', '{randomGen.Output()[1]}', '{randomGen.Output()[2]}')";
-                            queryConnect = new SqlCommand(query, connect);
-                            connect.Open();
-                            _ = queryConnect.ExecuteReader();
-                            if (connect.State == ConnectionState.Open)
-                            {
-                                connect.Close();
-                            }
-                            query = "INSERT INTO PEOPLE(FULL_NAME, BIRTH_DATE, GENDER)";
-                            check++;
-                        }
-                        watch.Stop();
-                        Console.WriteLine();
-                        Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
-                        break;
                     case "clear":
                         connect.Open();
                         var clearConnect = new SqlCommand(clearTable, connect);
@@ -256,7 +287,6 @@ namespace PeopleBase
                         {
                             connect.Close();
                         }
-
                         break;
                     default:
                         break;
