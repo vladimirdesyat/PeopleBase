@@ -8,11 +8,11 @@
 
         public string checkTime;
         public string checkFaster;
-        
+
         public string viewAllTable;
-        public string clearTable;       
+        public string clearTable;
         public string drop;
-        public Queries() 
+        public Queries()
         {
             // 1
             createTable = "CREATE TABLE PEOPLE(FULL_NAME char(50),BIRTH_DATE DATE,GENDER char(1))";
