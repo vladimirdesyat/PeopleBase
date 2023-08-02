@@ -21,8 +21,15 @@ namespace PeopleBase.Components
                 switch (args[0])
                 {
                     case "1":
-                        connect.Open();                        
-                        _ = new SqlCommand(createTable, connect).ExecuteReader();
+                        connect.Open();
+                        try
+                        {
+                            _ = new SqlCommand(createTable, connect).ExecuteReader();
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Таблица с таким именем уже находится в базе данных.");
+                        }   
 
                         if (connect.State == ConnectionState.Open)
                         {
@@ -32,7 +39,14 @@ namespace PeopleBase.Components
                     case "2":
                         query += $"VALUES ('{args[1]}', '{args[2]}', '{args[3]}')";
                         connect.Open();
-                        _ = new SqlCommand(query, connect).ExecuteReader();
+                        try
+                        {
+                            _ = new SqlCommand(query, connect).ExecuteReader();
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Неверный формат внесения данных.");
+                        }
 
                         if (connect.State == ConnectionState.Open)
                         {
@@ -42,7 +56,6 @@ namespace PeopleBase.Components
                     case "3":
                         connect.Open();
                         var reader = new SqlCommand(viewFullAgeTable, connect).ExecuteReader();
-
                         while (reader.Read())
                         {
                             for (int i = 0; i < reader.FieldCount; i++)
@@ -54,29 +67,36 @@ namespace PeopleBase.Components
                                 valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
                             }
                         }
-                        table.AddColumn(valuesOfColumns);
-                        table.AddColumn("Age".Split('\n'));
-
-                        for (int i = 0; i < valuesOfRows.Count; i++)
+                        if (!valuesOfColumns.Any())
                         {
-                            if ((i + 1) % 4 == 0)
-                            {
-                                output.Add(valuesOfRows[i]);
-                                table.AddRow(output[0], output[1].Substring(0, 10), output[2], output[3]);
-                                output.Clear();
-                            }
-                            else
-                            {
-                                output.Add(valuesOfRows[i]);
-                            }
+                            Console.WriteLine("В таблице отсутствуют данные для отображения.");
                         }
+                        else
+                        {
+                            table.AddColumn(valuesOfColumns);
+                            table.AddColumn("Age".Split('\n'));
 
-                        table.Write();
-                        Console.WriteLine();
+                            for (int i = 0; i < valuesOfRows.Count; i++)
+                            {
+                                if ((i + 1) % 4 == 0)
+                                {
+                                    output.Add(valuesOfRows[i]);
+                                    table.AddRow(output[0], output[1].Substring(0, 10), output[2], output[3]);
+                                    output.Clear();
+                                }
+                                else
+                                {
+                                    output.Add(valuesOfRows[i]);
+                                }
+                            }
+
+                            table.Write();
+                            Console.WriteLine();
+                        }                        
 
                         if (connect.State == ConnectionState.Open)
                         {
-                            connect.Close();
+                                connect.Close();
                         }
                         break;
                     case "4":
@@ -158,36 +178,42 @@ namespace PeopleBase.Components
                     case "5":
                         connect.Open();
                         watch.Start();
-
-                        reader = new SqlCommand(checkTime, connect).ExecuteReader();
-
-                        while (reader.Read())
+                        try
                         {
-                            for (int i = 0; i < reader.FieldCount; i++)
+                            reader = new SqlCommand(checkTime, connect).ExecuteReader();
+
+                            while (reader.Read())
                             {
-                                if (valuesOfColumns.Count < 3)
+                                for (int i = 0; i < reader.FieldCount; i++)
                                 {
-                                    valuesOfColumns.Add(reader.GetName(i).ToString());
+                                    if (valuesOfColumns.Count < 3)
+                                    {
+                                        valuesOfColumns.Add(reader.GetName(i).ToString());
+                                    }
+                                    valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
                                 }
-                                valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
                             }
+                            table.AddColumn(valuesOfColumns);
+                            for (int i = 0; i < valuesOfRows.Count; i++)
+                            {
+                                if ((i + 1) % 3 == 0)
+                                {
+                                    output.Add(valuesOfRows[i]);
+                                    table.AddRow(output[0], output[1], output[2]);
+                                    output.Clear();
+                                }
+                                else
+                                {
+                                    output.Add(valuesOfRows[i]);
+                                }
+                            }
+                            table.Write();
+                            watch.Stop();
                         }
-                        table.AddColumn(valuesOfColumns);
-                        for (int i = 0; i < valuesOfRows.Count; i++)
+                        catch 
                         {
-                            if ((i + 1) % 3 == 0)
-                            {
-                                output.Add(valuesOfRows[i]);
-                                table.AddRow(output[0], output[1], output[2]);
-                                output.Clear();
-                            }
-                            else
-                            {
-                                output.Add(valuesOfRows[i]);
-                            }
+                            Console.WriteLine("В таблице отсутствуют данные для отображения.");
                         }
-                        table.Write();
-                        watch.Stop();
                         Console.WriteLine();
                         Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
 
@@ -206,6 +232,7 @@ namespace PeopleBase.Components
                     case "clear":
                         connect.Open();
                         _ = new SqlCommand(clearTable, connect).ExecuteReader();
+                        
                         if (connect.State == ConnectionState.Open)
                         {
                             connect.Close();
@@ -213,35 +240,42 @@ namespace PeopleBase.Components
                         break;
                     case "view":
                         connect.Open();
-                        reader = new SqlCommand(viewAllTable, connect).ExecuteReader();
+                        try
+                        {
+                            reader = new SqlCommand(viewAllTable, connect).ExecuteReader();
 
-                        while (reader.Read())
-                        {
-                            for (int i = 0; i < reader.FieldCount; i++)
+                            while (reader.Read())
                             {
-                                if (valuesOfColumns.Count < 3)
+                                for (int i = 0; i < reader.FieldCount; i++)
                                 {
-                                    valuesOfColumns.Add(reader.GetName(i).ToString());
+                                    if (valuesOfColumns.Count < 3)
+                                    {
+                                        valuesOfColumns.Add(reader.GetName(i).ToString());
+                                    }
+                                    valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
                                 }
-                                valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
                             }
+                            table.AddColumn(valuesOfColumns);
+                            for (int i = 0; i < valuesOfRows.Count; i++)
+                            {
+                                if ((i + 1) % 3 == 0)
+                                {
+                                    output.Add(valuesOfRows[i]);
+                                    table.AddRow(output[0], output[1], output[2]);
+                                    output.Clear();
+                                }
+                                else
+                                {
+                                    output.Add(valuesOfRows[i]);
+                                }
+                            }
+                            table.Write();
+                            Console.WriteLine();
                         }
-                        table.AddColumn(valuesOfColumns);
-                        for (int i = 0; i < valuesOfRows.Count; i++)
+                        catch
                         {
-                            if ((i + 1) % 3 == 0)
-                            {
-                                output.Add(valuesOfRows[i]);
-                                table.AddRow(output[0], output[1], output[2]);
-                                output.Clear();
-                            }
-                            else
-                            {
-                                output.Add(valuesOfRows[i]);
-                            }
+                            Console.WriteLine("В таблице отсутствуют данные для отображения.");
                         }
-                        table.Write();
-                        Console.WriteLine();
 
                         if (connect.State == ConnectionState.Open)
                         {
@@ -256,7 +290,7 @@ namespace PeopleBase.Components
                         }
                         catch
                         {
-                            Console.WriteLine("Таблица не существует");
+                            Console.WriteLine("Таблица не существует.");
                         }                        
                         connect.Close();
                         break;

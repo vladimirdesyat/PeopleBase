@@ -1,4 +1,4 @@
-﻿class Program
+﻿class PeopleBaseMain
 {
     static void Main(string[] args)
     {        
