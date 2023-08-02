@@ -1,5 +1,4 @@
-﻿using PeopleBase;
-class Program
+﻿class Program
 {
     static void Main(string[] args)
     {        
@@ -18,7 +17,7 @@ class Program
         }
         else
         {
-            _ = new Arguments(args);
+            _ = new PeopleBase.Components.Arguments(args);
         }
     }
 }
