@@ -133,10 +133,9 @@ namespace PeopleBase.Components
 
                         watch.Stop();
                         Console.WriteLine();
-                        Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
+                        Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс.");
                         break;
                     case "4.1":
-                        watch.Start();
                         bulkDataTable = new BulkDataTable();
                         dt = new DataTable();
                         for (int i = 2000; i > 0; i--)
@@ -170,10 +169,6 @@ namespace PeopleBase.Components
                         {
                             connect.Close();
                         }
-
-                        watch.Stop();
-                        Console.WriteLine();
-                        Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
                         break;
                     case "5":
                         connect.Open();
@@ -193,43 +188,153 @@ namespace PeopleBase.Components
                                     valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
                                 }
                             }
-                            table.AddColumn(valuesOfColumns);
-                            for (int i = 0; i < valuesOfRows.Count; i++)
-                            {
-                                if ((i + 1) % 3 == 0)
-                                {
-                                    output.Add(valuesOfRows[i]);
-                                    table.AddRow(output[0], output[1], output[2]);
-                                    output.Clear();
-                                }
-                                else
-                                {
-                                    output.Add(valuesOfRows[i]);
-                                }
-                            }
-                            table.Write();
                             watch.Stop();
                         }
                         catch 
                         {
                             Console.WriteLine("В таблице отсутствуют данные для отображения.");
                         }
+
                         Console.WriteLine();
-                        Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
+                        Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс.");
 
                         if (connect.State == ConnectionState.Open)
                         {
                             connect.Close();
                         }
                         break;
-                    case "6":
-                        connect.Open();
-                        if (connect.State == ConnectionState.Open)
+                    case "5.1":
+                    connect.Open();
+                    watch.Start();
+                    try
+                    {
+                        reader = new SqlCommand(checkTime, connect).ExecuteReader();
+
+                        while (reader.Read())
                         {
-                            connect.Close();
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                if (valuesOfColumns.Count < 3)
+                                {
+                                    valuesOfColumns.Add(reader.GetName(i).ToString());
+                                }
+                                valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
+                            }
                         }
+                        watch.Stop();
+
+                        table.AddColumn(valuesOfColumns);
+                        for (int i = 0; i < valuesOfRows.Count; i++)
+                        {
+                            if ((i + 1) % 3 == 0)
+                            {
+                                output.Add(valuesOfRows[i]);
+                                table.AddRow(output[0], output[1], output[2]);
+                                output.Clear();
+                            }
+                            else
+                            {
+                                output.Add(valuesOfRows[i]);
+                            }
+                        }
+                        table.Write(); 
+                    }
+                    catch
+                    {
+                        Console.WriteLine("В таблице отсутствуют данные для отображения.");
+                    }
+
+                    Console.WriteLine();
+                    Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс");
+
+                    if (connect.State == ConnectionState.Open)
+                    {
+                        connect.Close();
+                    }
                     break;
-                    case "clear":
+                case "6":
+                    connect.Open();
+                    watch.Start();
+                    try
+                    {
+                        reader = new SqlCommand(checkFaster, connect).ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                if (valuesOfColumns.Count < 3)
+                                {
+                                    valuesOfColumns.Add(reader.GetName(i).ToString());
+                                }
+                                valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
+                            }
+                        }
+                        watch.Stop();
+                    }
+                    catch
+                    {
+                        Console.WriteLine("В таблице отсутствуют данные для отображения.");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс.");
+                    Console.WriteLine($"Время выполнения быстрее (при размере тестовой базы в 1 млн строк) по сравнению с 5 аргументом. Мы используем запрос вида 'SELECT DISTINCT FULL_NAME,BIRTH_DATE, GENDER FROM PEOPLE WHERE GENDER = 'M' AND FULL_NAME LIKE 'F%'' вместо запроса 'SELECT DISTINCT * FROM PEOPLE WHERE GENDER = 'M' AND FULL_NAME LIKE 'F%''.");
+
+                    if (connect.State == ConnectionState.Open)
+                    {
+                        connect.Close();
+                    }
+                    break;
+                case "6.1":
+                    connect.Open();
+                    watch.Start();
+                    try
+                    {
+                        reader = new SqlCommand(checkFaster, connect).ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                if (valuesOfColumns.Count < 3)
+                                {
+                                    valuesOfColumns.Add(reader.GetName(i).ToString());
+                                }
+                                valuesOfRows.Add(reader.GetValue(i).ToString() ?? string.Empty);
+                            }
+                        }
+                        watch.Stop();
+
+                        table.AddColumn(valuesOfColumns);
+                        for (int i = 0; i < valuesOfRows.Count; i++)
+                        {
+                            if ((i + 1) % 3 == 0)
+                            {
+                                output.Add(valuesOfRows[i]);
+                                table.AddRow(output[0], output[1], output[2]);
+                                output.Clear();
+                            }
+                            else
+                            {
+                                output.Add(valuesOfRows[i]);
+                            }
+                        }
+                        table.Write();
+                    }
+                    catch
+                    {
+                        Console.WriteLine("В таблице отсутствуют данные для отображения.");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine($"Время выполнения: {watch.ElapsedMilliseconds} мс.");
+                    Console.WriteLine($"Время выполнения быстрее примерно в 2 раза (при размере тестовой базы в 1 млн строк) по сравнению с 5 аргументом. Мы используем запрос вида 'SELECT DISTINCT FULL_NAME,BIRTH_DATE, GENDER FROM PEOPLE WHERE GENDER = 'M' AND FULL_NAME LIKE 'F%'' вместо запроса 'SELECT DISTINCT * FROM PEOPLE WHERE GENDER = 'M' AND FULL_NAME LIKE 'F%''.");
+
+                    if (connect.State == ConnectionState.Open)
+                    {
+                        connect.Close();
+                    }
+                    break;
+                case "clear":
                         connect.Open();
                         _ = new SqlCommand(clearTable, connect).ExecuteReader();
                         

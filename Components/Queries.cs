@@ -2,12 +2,15 @@
 {
     internal class Queries
     {
-        public string viewAllTable;
-        public string viewFullAgeTable;
-        public string checkTime;
-        public string clearTable;
         public string createTable;
         public string query;
+        public string viewFullAgeTable;
+
+        public string checkTime;
+        public string checkFaster;
+        
+        public string viewAllTable;
+        public string clearTable;       
         public string drop;
         public Queries() 
         {
@@ -24,6 +27,7 @@
             checkTime = "SELECT DISTINCT * FROM PEOPLE WHERE GENDER = 'M' AND FULL_NAME LIKE 'F%'";
 
             // 6
+            checkFaster = "SELECT DISTINCT FULL_NAME,BIRTH_DATE, GENDER FROM PEOPLE WHERE GENDER = 'M' AND FULL_NAME LIKE 'F%'";
 
             // view
             viewAllTable = "SELECT * FROM PEOPLE ORDER BY Full_Name";
