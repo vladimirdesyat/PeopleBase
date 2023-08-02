@@ -260,6 +260,9 @@ namespace PeopleBase.Components
                         connect.Close();
                     }
                     break;
+                case "del":
+                    File.Delete(SaveDataBase());
+                    break;
                 default:
                     break;
             }
