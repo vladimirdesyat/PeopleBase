@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PeopleBase": {
+      "commandName": "Project",
+      "commandLineArgs": "del"
+    }
+  }
+}

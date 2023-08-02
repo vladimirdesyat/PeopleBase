@@ -1,14 +1,38 @@
 ﻿namespace PeopleBase.Components
 {
-    internal class Queries : Data.Database
+    internal class Queries
     {
-        public string viewTable = "SELECT DISTINCT * FROM PEOPLE ORDER BY Full_Name";
-        public string viewAllTable = "SELECT * FROM PEOPLE ORDER BY Full_Name";
-        public string viewFullAgeTable = "SELECT FULL_NAME,BIRTH_DATE, GENDER, DATEDIFF(YEAR, BIRTH_DATE, GETDATE()) AS 'AGE' FROM PEOPLE ORDER BY FULL_NAME";
-        public string checkTime = "SELECT DISTINCT * FROM PEOPLE WHERE GENDER = 'M' AND FULL_NAME LIKE 'F%'";
-        public string clearTable = "DELETE FROM PEOPLE";
-        public string createTable = "CREATE TABLE PEOPLE(FULL_NAME char(50),BIRTH_DATE DATE,GENDER char(1))";
-        public string query = "INSERT INTO PEOPLE(FULL_NAME, BIRTH_DATE, GENDER)";
-        public Queries() { }
+        public string viewAllTable;
+        public string viewFullAgeTable;
+        public string checkTime;
+        public string clearTable;
+        public string createTable;
+        public string query;
+        public string drop;
+        public Queries() 
+        {
+            // 1
+            createTable = "CREATE TABLE PEOPLE(FULL_NAME char(50),BIRTH_DATE DATE,GENDER char(1))";
+
+            // 2 
+            query = "INSERT INTO PEOPLE(FULL_NAME, BIRTH_DATE, GENDER)";
+
+            // 3
+            viewFullAgeTable = "SELECT DISTINCT FULL_NAME,BIRTH_DATE, GENDER, DATEDIFF(YEAR, BIRTH_DATE, GETDATE()) AS 'AGE' FROM PEOPLE ORDER BY FULL_NAME";
+
+            // 5
+            checkTime = "SELECT DISTINCT * FROM PEOPLE WHERE GENDER = 'M' AND FULL_NAME LIKE 'F%'";
+
+            // 6
+
+            // view
+            viewAllTable = "SELECT * FROM PEOPLE ORDER BY Full_Name";
+
+            // clear
+            clearTable = "DELETE FROM PEOPLE";
+
+            // del
+            drop = "DROP TABLE PEOPLE";
+        }
     }
 }

@@ -17,7 +17,7 @@
         }
         public string CreateDataBase()
         {
-            var createDatabase = "CREATE DATABASE MyDatabase ON PRIMARY " +
+            var createDatabase = $"CREATE DATABASE {nameDatabase} ON PRIMARY " +
              $"(NAME = {nameDatabase}_Data, " +
              $"FILENAME = '{SaveDataBase()}', " +
              "SIZE = 2MB, MAXSIZE = 10MB, FILEGROWTH = 10%)" +
